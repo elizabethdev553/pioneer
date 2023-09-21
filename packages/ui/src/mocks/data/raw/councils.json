@@ -1,0 +1,41 @@
+[
+  {
+    "id": "0",
+    "electedAtBlock": 780,
+    "electedAtTime": "2022-07-01T15:01:31.918Z",
+    "electedAtNetwork": "OLYMPIA",
+    "endedAtBlock": 9437,
+    "endedAtTime": "2022-06-07T13:21:14.103Z",
+    "endedAtNetwork": "OLYMPIA"
+  },
+  {
+    "id": "1",
+    "electedAtBlock": 28502,
+    "electedAtTime": "2022-07-06T11:24:42.586Z",
+    "electedAtNetwork": "OLYMPIA",
+    "endedAtBlock": 88527,
+    "endedAtTime": "2022-09-24T07:12:10.894Z",
+    "endedAtNetwork": "OLYMPIA"
+  },
+  {
+    "id": "2",
+    "electedAtBlock": 52110,
+    "electedAtTime": "2022-06-28T06:09:47.734Z",
+    "electedAtNetwork": "OLYMPIA",
+    "endedAtBlock": 72927,
+    "endedAtTime": "2022-08-18T06:31:01.173Z",
+    "endedAtNetwork": "OLYMPIA"
+  },
+  {
+    "id": "3",
+    "electedAtBlock": 62285,
+    "electedAtTime": "2022-10-17T23:11:00.390Z",
+    "electedAtNetwork": "OLYMPIA"
+  },
+  {
+    "id": "4",
+    "electedAtBlock": 58808,
+    "electedAtTime": "2022-09-05T13:34:01.282Z",
+    "electedAtNetwork": "OLYMPIA"
+  }
+]

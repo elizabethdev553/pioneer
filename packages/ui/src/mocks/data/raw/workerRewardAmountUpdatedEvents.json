@@ -1,0 +1,82 @@
+[
+  {
+    "inBlock": 94717,
+    "createdAt": "2022-03-02T08:55:59.453Z",
+    "network": "OLYMPIA",
+    "groupId": "membershipWorkingGroup",
+    "workerId": "membershipWorkingGroup-75",
+    "newRewardPerBlock": 38
+  },
+  {
+    "inBlock": 72611,
+    "createdAt": "2022-04-02T15:13:51.846Z",
+    "network": "OLYMPIA",
+    "groupId": "forumWorkingGroup",
+    "workerId": "forumWorkingGroup-22",
+    "newRewardPerBlock": 33
+  },
+  {
+    "inBlock": 76609,
+    "createdAt": "2021-11-11T11:40:24.536Z",
+    "network": "OLYMPIA",
+    "groupId": "storageWorkingGroup",
+    "workerId": "storageWorkingGroup-42",
+    "newRewardPerBlock": 3
+  },
+  {
+    "inBlock": 36763,
+    "createdAt": "2022-03-11T11:59:10.113Z",
+    "network": "OLYMPIA",
+    "groupId": "storageWorkingGroup",
+    "workerId": "storageWorkingGroup-43",
+    "newRewardPerBlock": 17
+  },
+  {
+    "inBlock": 38312,
+    "createdAt": "2022-01-28T06:02:20.970Z",
+    "network": "OLYMPIA",
+    "groupId": "forumWorkingGroup",
+    "workerId": "forumWorkingGroup-22",
+    "newRewardPerBlock": 42
+  },
+  {
+    "inBlock": 27356,
+    "createdAt": "2022-01-29T23:05:37.243Z",
+    "network": "OLYMPIA",
+    "groupId": "membershipWorkingGroup",
+    "workerId": "membershipWorkingGroup-73",
+    "newRewardPerBlock": 2
+  },
+  {
+    "inBlock": 36381,
+    "createdAt": "2022-01-07T09:28:14.164Z",
+    "network": "OLYMPIA",
+    "groupId": "forumWorkingGroup",
+    "workerId": "forumWorkingGroup-13",
+    "newRewardPerBlock": 30
+  },
+  {
+    "inBlock": 48791,
+    "createdAt": "2022-01-13T00:47:39.886Z",
+    "network": "OLYMPIA",
+    "groupId": "membershipWorkingGroup",
+    "workerId": "membershipWorkingGroup-60",
+    "newRewardPerBlock": 8
+  },
+  {
+    "inBlock": 57840,
+    "createdAt": "2021-11-09T07:16:31.274Z",
+    "network": "OLYMPIA",
+    "groupId": "storageWorkingGroup",
+    "workerId": "storageWorkingGroup-35",
+    "newRewardPerBlock": 21
+  },
+  {
+    "inBlock": 41603,
+    "createdAt": "2022-04-14T16:49:50.592Z",
+    "network": "OLYMPIA",
+    "groupId": "membershipWorkingGroup",
+    "workerId": "membershipWorkingGroup-67",
+    "newRewardPerBlock": 16
+  }
+]

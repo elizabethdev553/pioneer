@@ -1,0 +1,15 @@
+/node_modules
+build
+coverage
+build-storybook
+.idea
+*.log
+.DS_Store
+packages/ui/.env
+packages/ui/src/services/i18n/utils/csv
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

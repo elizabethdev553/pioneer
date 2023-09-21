@@ -1,0 +1,352 @@
+fragment ForumBaseCategoryFields on ForumCategory {
+  id
+  title
+  description
+  status {
+    __typename
+    ... on CategoryStatusArchived {
+      categoryArchivalStatusUpdatedEvent {
+        createdAt
+        inBlock
+        network
+      }
+    }
+  }
+}
+
+fragment ForumCategoryFields on ForumCategory {
+  ...ForumBaseCategoryFields
+  moderators {
+    ...ForumModeratorFields
+  }
+  forumcategoryparent {
+    ...ForumSubCategoryFields
+    status {
+      __typename
+    }
+  }
+}
+
+fragment ArchivedForumCategoryFields on ForumCategory {
+  ...ForumBaseCategoryFields
+  forumcategoryparent {
+    ...ForumSubCategoryFields
+    status {
+      __typename
+    }
+  }
+}
+
+fragment ForumCategoryWithDetailsFields on ForumCategory {
+  ...ForumBaseCategoryFields
+  forumcategoryparent {
+    ...ForumCategoryFields
+  }
+  moderators {
+    ...ForumModeratorFields
+  }
+}
+
+fragment ForumModeratorFields on Worker {
+  id
+  membership {
+    id
+    handle
+    # metadata { avatar {} }
+    # See https://github.com/Joystream/pioneer/issues/54
+  }
+}
+
+fragment ForumSubCategoryFields on ForumCategory {
+  id
+  title
+}
+
+fragment ForumCategoryBreadcrumbsFields on ForumCategory {
+  ...ForumSubCategoryFields
+  parent {
+    ...ForumSubCategoryFields
+    parent {
+      ...ForumSubCategoryFields
+      parent {
+        ...ForumSubCategoryFields
+        parent {
+          ...ForumSubCategoryFields
+          parent {
+            ...ForumSubCategoryFields
+            parent {
+              ...ForumSubCategoryFields
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment ForumThreadBreadcrumbsFields on ForumThread {
+  id
+  title
+  category {
+    ...ForumCategoryBreadcrumbsFields
+  }
+}
+
+fragment ForumThreadFields on ForumThread {
+  id
+  isSticky
+  categoryId
+  category {
+    title
+  }
+  title
+  initialPost {
+    text
+  }
+  author {
+    ...MemberFields
+  }
+  createdInEvent {
+    createdAt
+    inBlock
+    network
+  }
+  status {
+    __typename
+    ... on ThreadStatusLocked {
+      threadDeletedEvent {
+        createdAt
+        inBlock
+        network
+      }
+    }
+  }
+  visiblePostsCount
+}
+
+fragment ForumPostFields on ForumPost {
+  ...ForumPostWithoutReplyFields
+  repliesTo {
+    ...ForumPostWithoutReplyFields
+  }
+}
+
+fragment ForumPostWithoutReplyFields on ForumPost {
+  id
+  createdAt
+  updatedAt
+  author {
+    ...MemberFields
+  }
+  text
+  authorId
+  forumthreadinitialPost {
+    createdInEvent {
+      createdAt
+      inBlock
+      network
+    }
+  }
+  postaddedeventpost {
+    createdAt
+    inBlock
+    network
+  }
+  postmoderatedeventpost {
+    actor {
+      membership {
+        ...MemberFields
+      }
+    }
+  }
+  status {
+    __typename
+  }
+  edits {
+    createdAt
+  }
+  threadId
+  thread {
+    categoryId
+  }
+}
+
+fragment ForumThreadDetailedFields on ForumThread {
+  ...ForumThreadFields
+}
+
+fragment ForumPostParents on ForumPost {
+  thread {
+    id
+    category {
+      id
+    }
+  }
+}
+
+fragment ForumThreadMentionFields on ForumThread {
+  id
+  title
+  visiblePostsCount
+  author {
+    ...MemberFields
+  }
+  initialPost {
+    text
+  }
+}
+
+fragment ForumPostMentionFields on ForumPost {
+  id
+  text
+  createdAt
+  author {
+    ...MemberFields
+  }
+}
+
+query GetForumCategories(
+  $where: ForumCategoryWhereInput
+  $orderBy: [ForumCategoryOrderByInput!]
+  $offset: Int
+  $limit: Int
+) {
+  forumCategories(where: $where, orderBy: $orderBy, offset: $offset, limit: $limit) {
+    ...ForumCategoryFields
+  }
+}
+
+query GetArchivedForumCategories($where: ForumCategoryWhereInput) {
+  forumCategories(where: $where) {
+    ...ArchivedForumCategoryFields
+  }
+}
+
+query GetForumCategory($where: ForumCategoryWhereUniqueInput!) {
+  forumCategoryByUniqueInput(where: $where) {
+    ...ForumCategoryWithDetailsFields
+  }
+}
+
+query GetForumCategoryBreadcrumbs($where: ForumCategoryWhereUniqueInput!) {
+  forumCategoryByUniqueInput(where: $where) {
+    ...ForumCategoryBreadcrumbsFields
+  }
+}
+
+query GetForumCategoryBreadcrumb($where: ForumCategoryWhereUniqueInput!) {
+  forumCategoryByUniqueInput(where: $where) {
+    ...ForumSubCategoryFields
+    parentId
+  }
+}
+
+query GetForumThreadBreadcrumbs($where: ForumThreadWhereUniqueInput!) {
+  forumThreadByUniqueInput(where: $where) {
+    ...ForumThreadBreadcrumbsFields
+  }
+}
+
+query GetForumThreads($where: ForumThreadWhereInput, $orderBy: [ForumThreadOrderByInput!], $offset: Int, $limit: Int) {
+  forumThreads(where: $where, orderBy: $orderBy, limit: $limit, offset: $offset) {
+    ...ForumThreadFields
+  }
+}
+
+query GetForumThreadsCount($where: ForumThreadWhereInput) {
+  forumThreadsConnection(where: $where) {
+    totalCount
+  }
+}
+
+query GetForumThreadsIDs {
+  forumThreads {
+    id
+  }
+}
+
+query GetForumThread($where: ForumThreadWhereUniqueInput!) {
+  thread: forumThreadByUniqueInput(where: $where) {
+    ...ForumThreadDetailedFields
+  }
+}
+
+query GetForumPosts($where: ForumPostWhereInput!, $orderBy: [ForumPostOrderByInput!], $offset: Int, $limit: Int) {
+  forumPosts(where: $where, orderBy: $orderBy, offset: $offset, limit: $limit) {
+    ...ForumPostFields
+  }
+}
+
+query GetForumPostEdits($id: ID!) {
+  edits: postTextUpdatedEvents(where: { post: { id_eq: $id } }, orderBy: [createdAt_ASC]) {
+    newText
+    network
+    createdAt
+    inBlock
+  }
+  initial: postAddedEvents(where: { post: { id_eq: $id } }) {
+    createdAt
+    network
+    inBlock
+    text
+  }
+}
+
+query GetForumPostsCount($where: ForumPostWhereInput!) {
+  forumPostsConnection(where: $where) {
+    totalCount
+  }
+}
+
+query GetForumPostsIds($where: ForumPostWhereInput!, $orderBy: [ForumPostOrderByInput!], $limit: Int) {
+  forumPosts(where: $where, orderBy: $orderBy, limit: $limit) {
+    id
+  }
+}
+
+query GetForumPostParents($where: ForumPostWhereUniqueInput!) {
+  forumPostByUniqueInput(where: $where) {
+    ...ForumPostParents
+  }
+}
+
+query SearchForumPost($where: ForumPostWhereInput!, $orderBy: [ForumPostOrderByInput!], $offset: Int, $limit: Int) {
+  forumPosts(where: $where, orderBy: $orderBy, offset: $offset, limit: $limit) {
+    id
+    text
+    thread {
+      id
+      title
+      categoryId
+    }
+  }
+}
+
+query SimpleSearchForumPost($text: String!, $limit: Int) {
+  forumPosts(where: { text_contains: $text }, limit: $limit) {
+    id
+    text
+    thread {
+      id
+    }
+  }
+}
+
+query SimpleSearchForumThreads($text: String!, $limit: Int) {
+  forumThreads(where: { title_contains: $text }, limit: $limit) {
+    id
+    title
+  }
+}
+
+query GetForumPostMention($id: ID!) {
+  forumPost: forumPostByUniqueInput(where: { id: $id }) {
+    ...ForumPostMentionFields
+  }
+}
+
+query GetForumThreadMention($id: ID!) {
+  forumThread: forumThreadByUniqueInput(where: { id: $id }) {
+    ...ForumThreadMentionFields
+  }
+}

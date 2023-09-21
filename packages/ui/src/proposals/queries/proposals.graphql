@@ -1,0 +1,367 @@
+fragment WorkerProposalDetails on Worker {
+  group {
+    id
+    name
+  }
+  membership {
+    ...MemberFields
+  }
+}
+
+fragment ProposalFields on Proposal {
+  id
+  title
+  status {
+    __typename
+  }
+  statusSetAtTime
+  details {
+    __typename
+  }
+  creator {
+    ...MemberFields
+  }
+  createdAt
+  councilApprovals
+  exactExecutionBlock
+}
+
+fragment VoteFields on ProposalVotedEvent {
+  id
+  voteKind
+  voter {
+    ...MemberFields
+  }
+  votingRound
+}
+
+fragment VoteWithDetailsFields on ProposalVotedEvent {
+  ...VoteFields
+  rationale
+  inBlock
+  createdAt
+  network
+  proposalId
+}
+
+fragment ProposalWithDetailsFields on Proposal {
+  ...ProposalFields
+  stakingAccount
+  description
+  statusSetAtBlock
+  votes {
+    ...VoteFields
+  }
+  createdInEvent {
+    inBlock
+    createdAt
+    network
+  }
+  proposalStatusUpdates {
+    inBlock
+    createdAt
+    network
+    newStatus {
+      __typename
+    }
+  }
+  details {
+    __typename
+    ... on FundingRequestProposalDetails {
+      destinationsList {
+        destinations {
+          amount
+          account
+        }
+      }
+    }
+    ... on CreateWorkingGroupLeadOpeningProposalDetails {
+      metadata {
+        description
+      }
+      stakeAmount
+      unstakingPeriod
+      rewardPerBlock
+      group {
+        id
+        name
+      }
+    }
+    ... on DecreaseWorkingGroupLeadStakeProposalDetails {
+      lead {
+        createdAt
+        ...WorkerProposalDetails
+      }
+      amount
+    }
+    ... on SlashWorkingGroupLeadProposalDetails {
+      lead {
+        createdAt
+        ...WorkerProposalDetails
+      }
+      amount
+    }
+    ... on RuntimeUpgradeProposalDetails {
+      newRuntimeBytecode {
+        id
+      }
+    }
+    ... on UpdateWorkingGroupBudgetProposalDetails {
+      group {
+        id
+        name
+      }
+      amount
+    }
+    ... on SetMaxValidatorCountProposalDetails {
+      newMaxValidatorCount
+    }
+    ... on FillWorkingGroupLeadOpeningProposalDetails {
+      opening {
+        id
+        group {
+          id
+          name
+        }
+      }
+      application {
+        applicant {
+          ...MemberFields
+        }
+      }
+    }
+    ... on CancelWorkingGroupLeadOpeningProposalDetails {
+      opening {
+        id
+        group {
+          id
+          name
+        }
+        metadata {
+          description
+        }
+      }
+    }
+    ... on SetWorkingGroupLeadRewardProposalDetails {
+      lead {
+        ...WorkerProposalDetails
+      }
+      newRewardPerBlock
+    }
+    ... on TerminateWorkingGroupLeadProposalDetails {
+      lead {
+        ...WorkerProposalDetails
+      }
+      slashingAmount
+    }
+    ... on SetMembershipPriceProposalDetails {
+      newPrice
+    }
+    ... on SetCouncilBudgetIncrementProposalDetails {
+      newAmount
+    }
+    ... on SetMembershipLeadInvitationQuotaProposalDetails {
+      newLeadInvitationQuota
+    }
+    ... on SignalProposalDetails {
+      text
+    }
+    ... on SetReferralCutProposalDetails {
+      newReferralCut
+    }
+    ... on SetInitialInvitationBalanceProposalDetails {
+      newInitialInvitationBalance
+    }
+    ... on SetInitialInvitationCountProposalDetails {
+      newInitialInvitationsCount
+    }
+    ... on SetCouncilorRewardProposalDetails {
+      newRewardPerBlock
+    }
+    ... on VetoProposalDetails {
+      proposal {
+        id
+        title
+      }
+    }
+    ... on UpdateChannelPayoutsProposalDetails {
+      channelCashoutsEnabled
+      minCashoutAllowed
+      maxCashoutAllowed
+      payloadHash
+    }
+  }
+  discussionThread {
+    id
+    posts {
+      ...DiscussionPostFields
+    }
+    mode {
+      __typename
+      ... on ProposalDiscussionThreadModeClosed {
+        whitelist {
+          members {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment DiscussionPostFields on ProposalDiscussionPost {
+  ...DiscussionPostWithoutReplyFields
+  repliesTo {
+    ...DiscussionPostWithoutReplyFields
+  }
+}
+
+fragment DiscussionPostWithoutReplyFields on ProposalDiscussionPost {
+  id
+  createdAt
+  createdInEvent {
+    createdAt
+    inBlock
+    network
+  }
+  updatedAt
+  author {
+    ...MemberFields
+  }
+  text
+  status {
+    __typename
+  }
+  discussionThread {
+    id
+  }
+}
+
+fragment ProposalPostParents on ProposalDiscussionPost {
+  discussionThreadId
+}
+
+fragment ProposalMentionFields on Proposal {
+  id
+  title
+  description
+  exactExecutionBlock
+  statusSetAtBlock
+  statusSetAtTime
+  createdAt
+  createdInEvent {
+    network
+  }
+  details {
+    __typename
+  }
+  status {
+    __typename
+  }
+}
+
+fragment ProposalDiscussionPostMentionFields on ProposalDiscussionPost {
+  id
+  text
+  createdAt
+  author {
+    ...MemberFields
+  }
+}
+
+query getProposals($where: ProposalWhereInput, $orderBy: [ProposalOrderByInput!], $limit: Int, $offset: Int) {
+  proposals(where: $where, orderBy: $orderBy, limit: $limit, offset: $offset) {
+    ...ProposalFields
+  }
+}
+
+query getProposalsCount($where: ProposalWhereInput) {
+  proposalsConnection(where: $where) {
+    totalCount
+  }
+}
+
+query getProposal($where: ProposalWhereUniqueInput!) {
+  proposal: proposalByUniqueInput(where: $where) {
+    ...ProposalWithDetailsFields
+  }
+}
+
+query SimpleSearchProposals($text: String!, $limit: Int) {
+  proposals(where: { title_contains: $text }, limit: $limit) {
+    id
+    title
+  }
+}
+
+query SimpleSearchProposalDiscussion($text: String!, $limit: Int) {
+  proposalDiscussionPosts(where: { text_contains: $text }, limit: $limit) {
+    id
+    text
+    discussionThreadId
+  }
+}
+
+query GetVoteWithDetails($id: ID!) {
+  proposalVotedEventByUniqueInput(where: { id: $id }) {
+    ...VoteWithDetailsFields
+  }
+}
+
+query GetRuntimeWasmBytecode($where: RuntimeWasmBytecodeWhereUniqueInput!) {
+  runtime: runtimeWasmBytecodeByUniqueInput(where: $where) {
+    id
+    bytecode
+  }
+}
+
+query GetProposalPostParent($where: ProposalDiscussionPostWhereUniqueInput!) {
+  proposalDiscussionPostByUniqueInput(where: $where) {
+    ...ProposalPostParents
+  }
+}
+
+query GetProposalVotes($where: ProposalVotedEventWhereInput, $orderBy: [ProposalVotedEventOrderByInput!]) {
+  proposalVotedEvents(where: $where, orderBy: $orderBy) {
+    ...VoteFields
+  }
+}
+
+query GetProposalMention($id: ID!) {
+  proposal: proposalByUniqueInput(where: { id: $id }) {
+    ...ProposalMentionFields
+  }
+}
+
+query GetProposalDiscussionPostMention($id: ID!) {
+  proposalPost: proposalDiscussionPostByUniqueInput(where: { id: $id }) {
+    ...ProposalDiscussionPostMentionFields
+  }
+}
+
+query GetLatestProposalByMemberId($lockAccount: String) {
+  proposals(where: { stakingAccount_eq: $lockAccount }, orderBy: [createdAt_DESC], limit: 1) {
+    id
+    createdInEvent {
+      createdAt
+      inBlock
+      network
+    }
+    status {
+      __typename
+    }
+    details {
+      __typename
+    }
+    exactExecutionBlock
+    statusSetAtBlock
+    statusSetAtTime
+    createdAt
+  }
+}
+
+query GetPayloadDataObjectId($inBlock: Int, $payloadHash: String) {
+  channelPayoutsUpdatedEvents(where: { inBlock_eq: $inBlock, payloadHash_eq: $payloadHash }, limit: 1) {
+    payloadDataObjectId
+  }
+}

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "0",
+    "inBlock": 29639,
+    "createdAt": "2022-02-08T07:25:30.944Z",
+    "network": "OLYMPIA",
+    "groupId": "forumWorkingGroup",
+    "workerId": "forumWorkingGroup-11",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 2705,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  },
+  {
+    "id": "1",
+    "inBlock": 80672,
+    "createdAt": "2022-01-31T03:51:38.719Z",
+    "network": "OLYMPIA",
+    "groupId": "forumWorkingGroup",
+    "workerId": "forumWorkingGroup-11",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 1726,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  },
+  {
+    "id": "2",
+    "inBlock": 3968,
+    "createdAt": "2022-03-26T17:22:44.348Z",
+    "network": "OLYMPIA",
+    "groupId": "forumWorkingGroup",
+    "workerId": "forumWorkingGroup-11",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 8066,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  },
+  {
+    "id": "3",
+    "inBlock": 87794,
+    "createdAt": "2022-02-18T19:28:10.549Z",
+    "network": "OLYMPIA",
+    "groupId": "forumWorkingGroup",
+    "workerId": "forumWorkingGroup-11",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 4921,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  },
+  {
+    "id": "4",
+    "inBlock": 43583,
+    "createdAt": "2021-12-18T07:04:54.678Z",
+    "network": "OLYMPIA",
+    "groupId": "membershipWorkingGroup",
+    "workerId": "membershipWorkingGroup-79",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 1914,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  },
+  {
+    "id": "5",
+    "inBlock": 85541,
+    "createdAt": "2021-12-31T16:14:22.779Z",
+    "network": "OLYMPIA",
+    "groupId": "storageWorkingGroup",
+    "workerId": "storageWorkingGroup-46",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 3436,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  },
+  {
+    "id": "6",
+    "inBlock": 46617,
+    "createdAt": "2021-12-05T00:56:14.919Z",
+    "network": "OLYMPIA",
+    "groupId": "contentWorkingGroup",
+    "workerId": "contentWorkingGroup-47",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 8308,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  },
+  {
+    "id": "7",
+    "inBlock": 80443,
+    "createdAt": "2021-11-15T11:43:54.048Z",
+    "network": "OLYMPIA",
+    "groupId": "forumWorkingGroup",
+    "workerId": "forumWorkingGroup-18",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 9363,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  },
+  {
+    "id": "8",
+    "inBlock": 96530,
+    "createdAt": "2021-11-04T13:19:09.216Z",
+    "network": "OLYMPIA",
+    "groupId": "membershipWorkingGroup",
+    "workerId": "membershipWorkingGroup-73",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 3552,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  },
+  {
+    "id": "9",
+    "inBlock": 88768,
+    "createdAt": "2021-11-17T23:13:11.376Z",
+    "network": "OLYMPIA",
+    "groupId": "forumWorkingGroup",
+    "workerId": "forumWorkingGroup-0",
+    "rewardAccount": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    "amount": 7941,
+    "reciever": "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
+  }
+]

@@ -1,0 +1,409 @@
+fragment CouncilMemberFields on CouncilMember {
+  id
+  member {
+    ...MemberFields
+    councilMembers {
+      __typename
+    }
+  }
+  unpaidReward
+  stake
+}
+
+fragment PastCouncilProposalsFields on ProposalVotedEvent {
+  voteKind
+  voterId
+  proposal {
+    ...ProposalFields
+  }
+}
+
+fragment PastCouncilWorkingGroupFields on WorkingGroup {
+  id
+  name
+}
+
+fragment PastCouncilBudgetSetEventFields on BudgetSetEvent {
+  newBudget
+  groupId
+}
+
+fragment PastCouncilRewardPaidEventFields on RewardPaidEvent {
+  groupId
+  amount
+}
+
+fragment PastCouncilNewMissedRewardLevelReachedEventFields on NewMissedRewardLevelReachedEvent {
+  groupId
+  workerId
+  newMissedRewardAmount
+}
+
+fragment ElectedCouncilFields on ElectedCouncil {
+  id
+  electedAtBlock
+  electedAtTime
+  electedAtNetwork
+  councilElections {
+    cycleId
+  }
+  councilMembers {
+    ...CouncilMemberFields
+  }
+}
+
+fragment PastCouncilFields on ElectedCouncil {
+  id
+  endedAtBlock
+  endedAtNetwork
+  endedAtTime
+}
+
+fragment PastCouncilDetailedFields on ElectedCouncil {
+  ...PastCouncilFields
+  councilMembers {
+    accumulatedReward
+    unpaidReward
+  }
+}
+
+fragment ElectionCandidateFields on Candidate {
+  id
+  member {
+    ...MemberFields
+  }
+  stake
+  noteMetadata {
+    header
+    bulletPoints
+    bannerImageUri
+    description
+  }
+  status
+  stakingAccountId
+  votePower
+  votesReceived {
+    id
+  }
+}
+
+fragment ElectionRoundFields on ElectionRound {
+  cycleId
+  candidates {
+    ...ElectionCandidateFields
+  }
+}
+
+fragment LatestElectionRoundFields on ElectionRound {
+  ...ElectionRoundFields
+  isFinished
+}
+
+fragment PastElectionRoundFields on ElectionRound {
+  id
+  cycleId
+  endedAtBlock
+  endedAtTime
+  endedAtNetwork
+  candidates {
+    stake
+  }
+  castVotes {
+    voteForId
+  }
+}
+
+fragment PastElectionRoundDetailedFields on ElectionRound {
+  ...PastElectionRoundFields
+  candidates {
+    ...ElectionCandidateFields
+  }
+  castVotes {
+    stake
+    stakeLocked
+    voteForId
+    castBy
+  }
+}
+
+fragment ElectionCandidateDetailedFields on Candidate {
+  ...ElectionCandidateFields
+  stakingAccountId
+  rewardAccountId
+  electionRound {
+    cycleId
+    isFinished
+  }
+}
+
+fragment CastVoteFields on CastVote {
+  id
+  stake
+  stakeLocked
+  castBy
+  commitment
+  voteFor {
+    ...ElectionCandidateFields
+  }
+  electionRound {
+    cycleId
+    id
+  }
+  castEvent: votecasteventcastVote {
+    inBlock
+    network
+    createdAt
+  }
+}
+
+fragment CouncilSpendingEventFields on BudgetSpendingEvent {
+  amount
+  type
+}
+
+fragment FundingRequestApproved on ProposalExecutedEvent {
+  proposal {
+    details {
+      __typename
+      ... on FundingRequestProposalDetails {
+        destinationsList {
+          destinations {
+            amount
+            account
+          }
+        }
+      }
+    }
+  }
+}
+
+query GetElectedCouncil {
+  electedCouncils(where: { endedAtBlock_eq: null }, orderBy: [createdAt_DESC], limit: 1) {
+    ...ElectedCouncilFields
+  }
+}
+
+query GetCouncilorVoterStake($electionRound: ElectionRoundWhereInput!) {
+  candidates(where: { electionRound: $electionRound, status_eq: ELECTED }) {
+    memberId
+    votesReceived {
+      stake
+    }
+  }
+}
+
+query GetPastCouncils($offset: Int, $limit: Int, $orderBy: [ElectedCouncilOrderByInput!]) {
+  electedCouncils(where: { isResigned_eq: true }, offset: $offset, limit: $limit, orderBy: $orderBy) {
+    ...PastCouncilFields
+  }
+}
+
+query GetPastCouncilsCount {
+  electedCouncilsConnection(where: { isResigned_eq: true }) {
+    totalCount
+  }
+}
+
+query GetPastCouncil($id: ID!, $fromBlock: Int!, $toBlock: Int!) {
+  electedCouncilByUniqueInput(where: { id: $id }) {
+    ...PastCouncilDetailedFields
+  }
+  budgetSpendingEvents(where: { inBlock_gte: $fromBlock, inBlock_lte: $toBlock }) {
+    ...CouncilSpendingEventFields
+  }
+  fundingRequestsApproved: proposalExecutedEvents(
+    where: {
+      inBlock_gt: $fromBlock
+      inBlock_lt: $toBlock
+      proposal: { details_json: { isTypeOf_eq: "FundingRequestProposalDetails" } }
+    }
+  ) {
+    ...FundingRequestApproved
+  }
+}
+
+query GetPastCouncilMembers($councilId: ID!, $fromBlock: Int!, $toBlock: Int!) {
+  councilMembers(where: { electedInCouncil: { id_eq: $councilId } }) {
+    member {
+      ...MemberFields
+    }
+  }
+  proposalVotedEvents(where: { inBlock_gte: $fromBlock, inBlock_lte: $toBlock }, orderBy: [createdAt_DESC]) {
+    ...PastCouncilProposalsFields
+  }
+}
+
+query GetPastCouncilProposals($fromBlock: Int!, $toBlock: Int!) {
+  proposals(where: { createdInEvent: { inBlock_gte: $fromBlock, inBlock_lte: $toBlock } }, orderBy: [createdAt_DESC]) {
+    ...ProposalFields
+  }
+}
+
+query GetPastCouncilWorkingGroups($fromBlock: Int!, $toBlock: Int!) {
+  workingGroups {
+    ...PastCouncilWorkingGroupFields
+  }
+  budgetSetEvents(where: { inBlock_lte: $toBlock }, orderBy: [inBlock_DESC]) {
+    ...PastCouncilBudgetSetEventFields
+  }
+  rewardPaidEvents(where: { inBlock_gte: $fromBlock, inBlock_lte: $toBlock }) {
+    ...PastCouncilRewardPaidEventFields
+  }
+  newMissedRewardLevelReachedEvents(where: { inBlock_lte: $toBlock }, orderBy: [inBlock_DESC]) {
+    ...PastCouncilNewMissedRewardLevelReachedEventFields
+  }
+}
+
+query GetCurrentElection {
+  electionRounds(where: { isFinished_eq: false }, orderBy: [cycleId_DESC], limit: 1) {
+    ...ElectionRoundFields
+  }
+}
+
+query GetLatestElection {
+  electionRounds(orderBy: [cycleId_DESC], limit: 1) {
+    ...LatestElectionRoundFields
+  }
+}
+
+query GetPastElections($offset: Int, $limit: Int, $orderBy: [ElectionRoundOrderByInput!]) {
+  electionRounds(where: { isFinished_eq: true }, offset: $offset, limit: $limit, orderBy: $orderBy) {
+    ...PastElectionRoundFields
+  }
+}
+
+query GetPastElectionsCount {
+  electionRoundsConnection(where: { isFinished_eq: true }) {
+    totalCount
+  }
+}
+
+query GetPastElection($id: ID!) {
+  electionRoundByUniqueInput(where: { id: $id }) {
+    ...PastElectionRoundDetailedFields
+  }
+}
+
+query GetCandidate($where: CandidateWhereUniqueInput!) {
+  candidateByUniqueInput(where: $where) {
+    ...ElectionCandidateDetailedFields
+  }
+}
+
+query GetElectionCandidatesIds($electionCycleId: Int!) {
+  candidates(where: { electionRound: { cycleId_eq: $electionCycleId } }) {
+    id
+  }
+}
+
+query GetCurrentCandidateIdByMember($memberId: ID!) {
+  candidates(where: { member: { id_eq: $memberId } }, limit: 1) {
+    id
+  }
+}
+
+query GetCandidateStats($memberId: ID) {
+  withdrawn: candidatesConnection(where: { member: { id_eq: $memberId }, status_eq: WITHDRAWN }) {
+    totalCount
+  }
+  successful: candidatesConnection(where: { member: { id_eq: $memberId }, status_eq: ELECTED }) {
+    totalCount
+  }
+  failed: candidatesConnection(where: { member: { id_eq: $memberId }, status_eq: FAILED }) {
+    totalCount
+  }
+}
+
+query GetCouncilVotes($where: CastVoteWhereInput, $orderBy: [CastVoteOrderByInput!], $limit: Int, $offset: Int) {
+  castVotes(where: $where, orderBy: $orderBy, limit: $limit, offset: $offset) {
+    ...CastVoteFields
+  }
+}
+
+query GetCouncilVotesCommitments($where: CastVoteWhereInput, $orderBy: [CastVoteOrderByInput!]) {
+  castVotes(where: $where, orderBy: $orderBy) {
+    commitment
+  }
+}
+
+query GetCouncilVotesCount($where: CastVoteWhereInput) {
+  castVotesConnection(where: $where) {
+    totalCount
+  }
+}
+
+query GetPastVotesResults($myAccounts: [String!]) {
+  electionRounds(where: { isFinished_eq: true, castVotes_some: { castBy_in: $myAccounts } }) {
+    id
+    electedCouncil {
+      councilMembers {
+        member {
+          id
+        }
+      }
+    }
+  }
+  castVotes(where: { castBy_in: $myAccounts }) {
+    voteFor {
+      id
+    }
+    electionRound {
+      id
+    }
+  }
+}
+
+query GetCouncilBlockRange($where: ElectedCouncilWhereUniqueInput!) {
+  electedCouncilByUniqueInput(where: $where) {
+    electedAtBlock
+    endedAtBlock
+  }
+}
+
+query GetPastCouncilStats($startBlock: Int!, $endBlock: Int!) {
+  proposalsApproved: proposalExecutedEventsConnection(where: { inBlock_gt: $startBlock, inBlock_lt: $endBlock }) {
+    totalCount
+  }
+  fundingRequestsApproved: proposalExecutedEvents(
+    where: {
+      inBlock_gt: $startBlock
+      inBlock_lt: $endBlock
+      proposal: { details_json: { isTypeOf_eq: "FundingRequestProposalDetails" } }
+    }
+  ) {
+    ...FundingRequestApproved
+  }
+  ## Rejected + Slashed could be fetched using `isTypeOf_in: []` but it is not supported by Hydra now
+  proposalsRejected: proposalDecisionMadeEventsConnection(
+    where: {
+      inBlock_gt: $startBlock
+      inBlock_lt: $endBlock
+      decisionStatus_json: { isTypeOf_eq: "ProposalStatusRejected" }
+    }
+  ) {
+    totalCount
+  }
+  proposalsSlashed: proposalDecisionMadeEventsConnection(
+    where: {
+      inBlock_gt: $startBlock
+      inBlock_lt: $endBlock
+      decisionStatus_json: { isTypeOf_eq: "ProposalStatusSlashed" }
+    }
+  ) {
+    totalCount
+  }
+  budgetSpendingEvents(where: { inBlock_gte: $startBlock, inBlock_lte: $endBlock }) {
+    ...CouncilSpendingEventFields
+  }
+}
+
+query GetCouncilorElectionEvent($lockAccount: String) {
+  councilMembers(where: { stakingAccountId_eq: $lockAccount }, orderBy: [createdAt_DESC], limit: 1) {
+    electedInCouncil {
+      id
+      electedAtBlock
+      electedAtTime
+      electedAtNetwork
+    }
+  }
+}

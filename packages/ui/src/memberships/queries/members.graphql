@@ -1,0 +1,201 @@
+fragment MemberFields on Membership {
+  id
+  rootAccount
+  controllerAccount
+  boundAccounts
+  handle
+  metadata {
+    name
+    about
+    avatar {
+      __typename
+      ... on AvatarUri {
+        avatarUri
+      }
+      # ...on AvatarObject {} - Should be fetched from the Storage system.
+      # See https://github.com/Joystream/pioneer/issues/54
+    }
+  }
+  isVerified
+  isFoundingMember
+  isCouncilMember
+  inviteCount
+  roles {
+    id
+    group {
+      name
+    }
+    createdAt
+    isLead
+  }
+  createdAt
+  stakingaccountaddedeventmember {
+    createdAt
+    inBlock
+    network
+    account
+  }
+}
+
+fragment MemberWithDetailsFields on Membership {
+  ...MemberFields
+  metadata {
+    name
+    about
+    externalResources {
+      type
+      value
+    }
+    avatar {
+      __typename
+      ... on AvatarUri {
+        avatarUri
+      }
+      # ...on AvatarObject {} - Should be fetched from the Storage system.
+      # See https://github.com/Joystream/pioneer/issues/54
+    }
+  }
+  entry {
+    ... on MembershipEntryInvited {
+      memberInvitedEvent {
+        createdAt
+        inBlock
+        network
+      }
+    }
+    ... on MembershipEntryPaid {
+      membershipBoughtEvent {
+        createdAt
+        inBlock
+        network
+      }
+    }
+    ... on MembershipEntryGenesis {
+      phantom
+    }
+  }
+  invitees {
+    ...MemberFields
+    ## Deeply nested join does not work
+    # See: https://github.com/Joystream/pioneer/issues/1493
+    #    entry {
+    #      ...on MembershipEntryInvited {
+    #        memberInvitedEvent {
+    #          createdAt
+    #          inBlock
+    #          network
+    #        }
+    #      }
+    #    }
+  }
+  invitedBy {
+    ...MemberFields
+  }
+}
+
+query GetMembers($where: MembershipWhereInput, $orderBy: [MembershipOrderByInput!], $offset: Int, $limit: Int) {
+  memberships(where: $where, orderBy: $orderBy, offset: $offset, limit: $limit) {
+    ...MemberFields
+  }
+}
+
+query GetMembersWithDetails(
+  $where: MembershipWhereInput
+  $orderBy: [MembershipOrderByInput!]
+  $offset: Int
+  $limit: Int
+) {
+  memberships(where: $where, orderBy: $orderBy, offset: $offset, limit: $limit) {
+    ...MemberWithDetailsFields
+  }
+}
+
+query GetMembersCount($where: MembershipWhereInput) {
+  membershipsConnection(where: $where) {
+    totalCount
+  }
+}
+
+query GetMember($where: MembershipWhereUniqueInput!) {
+  membershipByUniqueInput(where: $where) {
+    ...MemberWithDetailsFields
+  }
+}
+
+query SearchMembers($text: String!, $limit: Int, $validIds: [ID!]) {
+  memberships(where: { handle_contains: $text, id_in: $validIds }, limit: $limit) {
+    ...MemberFields
+  }
+}
+
+query SimpleSearchMembers($text: String!, $limit: Int) {
+  memberships(where: { handle_contains: $text }, limit: $limit) {
+    id
+    handle
+  }
+}
+
+query GetMemberMention($id: ID!) {
+  membership: membershipByUniqueInput(where: { id: $id }) {
+    ...MemberFields
+  }
+}
+
+query GetMemberExtraInfo($membershipId_eq: ID!, $workerId_in: [ID!]!) {
+  councilMembersConnection(where: { member: { id_eq: $membershipId_eq } }) {
+    totalCount
+  }
+  forumPostsConnection(where: { author: { id_eq: $membershipId_eq } }) {
+    totalCount
+  }
+  workingGroupApplicationsConnection(where: { applicant: { id_eq: $membershipId_eq } }) {
+    totalCount
+  }
+  stakeSlashedEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+  terminatedLeaderEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+  terminatedWorkerEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+  workerStartedLeavingEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+}
+
+query GetMemberRowDetails($workerId_in: [ID!]!) {
+  stakeSlashedEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+  terminatedLeaderEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+  terminatedWorkerEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+}
+
+query GetMemberActionDetails($workerId_in: [ID!]!) {
+  stakeSlashedEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+  terminatedLeaderEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+  terminatedWorkerEventsConnection(where: { worker: { id_in: $workerId_in } }) {
+    totalCount
+  }
+  memberInvitedEventsConnection(where: { invitingMember: { id_in: $workerId_in } }) {
+    totalCount
+  }
+}
+
+query GetMemberInvitedEvents($lockAccount: String) {
+  memberInvitedEvents(where: { controllerAccount_eq: $lockAccount }, orderBy: [createdAt_DESC], limit: 1) {
+    createdAt
+    inBlock
+    network
+  }
+}

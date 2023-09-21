@@ -1,0 +1,190 @@
+fragment ProposalCreatedEventFields on ProposalCreatedEvent {
+  id
+  createdAt
+  proposal {
+    id
+    title
+    creator {
+      id
+      handle
+    }
+  }
+}
+
+fragment ProposalCancelledEventFields on ProposalCancelledEvent {
+  id
+  createdAt
+  proposal {
+    id
+    title
+    creator {
+      id
+      handle
+    }
+  }
+}
+
+fragment ProposalStatusUpdatedEventFields on ProposalStatusUpdatedEvent {
+  id
+  createdAt
+  proposal {
+    id
+    title
+  }
+  newStatus {
+    __typename
+  }
+}
+
+fragment ProposalDecisionMadeEventFields on ProposalDecisionMadeEvent {
+  id
+  createdAt
+  proposal {
+    id
+    title
+  }
+}
+
+fragment ProposalDiscussionModeChangedEventFields on ProposalDiscussionThreadModeChangedEvent {
+  id
+  createdAt
+  thread {
+    proposal {
+      id
+      title
+    }
+  }
+  newMode {
+    __typename
+  }
+}
+
+fragment ProposalExecutedEventFields on ProposalExecutedEvent {
+  id
+  createdAt
+  proposal {
+    id
+    title
+  }
+  executionStatus {
+    __typename
+  }
+}
+
+fragment ProposalVotedEventFields on ProposalVotedEvent {
+  id
+  createdAt
+  proposal {
+    id
+    title
+  }
+  voter {
+    id
+    handle
+  }
+}
+
+fragment ProposalDiscussionPostCreatedEventFields on ProposalDiscussionPostCreatedEvent {
+  id
+  createdAt
+  post {
+    id
+    author {
+      id
+      handle
+    }
+    discussionThread {
+      proposal {
+        id
+        title
+      }
+    }
+  }
+}
+
+fragment ProposalDiscussionPostUpdatedEventFields on ProposalDiscussionPostUpdatedEvent {
+  id
+  createdAt
+  post {
+    id
+    author {
+      id
+      handle
+    }
+    discussionThread {
+      proposal {
+        id
+        title
+      }
+    }
+  }
+}
+
+fragment ProposalDiscussionPostDeletedEventFields on ProposalDiscussionPostDeletedEvent {
+  id
+  createdAt
+  post {
+    id
+    author {
+      id
+      handle
+    }
+    discussionThread {
+      proposal {
+        id
+        title
+      }
+    }
+  }
+}
+
+query GetProposalsEvents {
+  events(
+    where: {
+      type_in: [
+        ProposalCreatedEvent
+        ProposalStatusUpdatedEvent
+        ProposalDecisionMadeEvent
+        ProposalCancelledEvent
+        ProposalDiscussionThreadModeChangedEvent
+        ProposalExecutedEvent
+        ProposalVotedEvent
+        ProposalDiscussionPostCreatedEvent
+        ProposalDiscussionPostUpdatedEvent
+        ProposalDiscussionPostDeletedEvent
+      ]
+    }
+    orderBy: [createdAt_DESC]
+  ) {
+    ... on ProposalCreatedEvent {
+      ...ProposalCreatedEventFields
+    }
+    ... on ProposalCancelledEvent {
+      ...ProposalCancelledEventFields
+    }
+    ... on ProposalStatusUpdatedEvent {
+      ...ProposalStatusUpdatedEventFields
+    }
+    ... on ProposalDecisionMadeEvent {
+      ...ProposalDecisionMadeEventFields
+    }
+    ... on ProposalDiscussionThreadModeChangedEvent {
+      ...ProposalDiscussionModeChangedEventFields
+    }
+    ... on ProposalExecutedEvent {
+      ...ProposalExecutedEventFields
+    }
+    ... on ProposalVotedEvent {
+      ...ProposalVotedEventFields
+    }
+    ... on ProposalDiscussionPostCreatedEvent {
+      ...ProposalDiscussionPostCreatedEventFields
+    }
+    ... on ProposalDiscussionPostUpdatedEvent {
+      ...ProposalDiscussionPostUpdatedEventFields
+    }
+    ... on ProposalDiscussionPostDeletedEvent {
+      ...ProposalDiscussionPostDeletedEventFields
+    }
+  }
+}

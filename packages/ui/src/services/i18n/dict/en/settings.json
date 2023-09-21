@@ -1,0 +1,12 @@
+{
+  "network": "Network",
+  "language": "Language",
+  "selectNetwork": "Select Network",
+  "networkDetails": "Network Details",
+  "networkAddress": "Network: ",
+  "QueryNodeAddress": "Query Node: ",
+  "faucet": "Faucet: ",
+  "chainInfo": "Chain Information",
+  "rpcBlockheight": "RPC Block Height: ",
+  "qnBlockheight": "Query Node Block Height: "
+}

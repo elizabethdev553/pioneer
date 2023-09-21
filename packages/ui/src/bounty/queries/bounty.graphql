@@ -1,0 +1,197 @@
+fragment BountyFields on Bounty {
+  id
+  createdAt
+  title
+  bannerImageUri
+  description
+  cherry
+  entrantStake
+  creator {
+    ...MemberFields
+  }
+  oracle {
+    ...MemberFields
+  }
+  ...BountyFundingTypeFields
+  entrantWhitelist {
+    members {
+      id
+    }
+  }
+  workPeriod
+  judgingPeriod
+  stage
+  isTerminated
+  totalFunding
+  discussionThreadId
+  contributions {
+    ...BountyContributionFields
+  }
+  entries {
+    ...BountyEntryWithDetailsFields
+  }
+  createdInEvent {
+    inBlock
+  }
+  judgment {
+    inBlock
+    rationale
+    createdAt
+    network
+  }
+  maxFundingReachedEvent {
+    createdAt
+  }
+}
+
+fragment BountyFundingTypeFields on Bounty {
+  fundingType {
+    ... on BountyFundingLimited {
+      minFundingAmount
+      maxFundingAmount
+      fundingPeriod
+    }
+    ... on BountyFundingPerpetual {
+      target
+    }
+  }
+}
+
+fragment BountyEntryFields on BountyEntry {
+  id
+  worker {
+    ...MemberFields
+  }
+  workSubmitted
+  status {
+    ... on BountyEntryStatusWinner {
+      reward
+    }
+  }
+  withdrawnInEvent {
+    inBlock
+  }
+}
+fragment BountyEntryWithDetailsFields on BountyEntry {
+  ...BountyEntryFields
+  works {
+    ...BountyWorkFields
+  }
+}
+
+fragment BountyWorkFields on WorkSubmittedEvent {
+  id
+  title
+  description
+}
+
+fragment BountyWorkWithDetailsFields on BountyEntry {
+  ...BountyEntryFields
+  works {
+    ...BountyWorkFields
+    inBlock
+    createdAt
+    network
+  }
+}
+
+fragment BountyContributionFields on BountyContribution {
+  id
+  amount
+  withdrawnInEvent {
+    id
+  }
+  contributor {
+    ...MemberFields
+  }
+}
+
+query GetBounties($where: BountyWhereInput, $orderBy: [BountyOrderByInput!], $offset: Int, $limit: Int) {
+  bounties(where: $where, orderBy: $orderBy, offset: $offset, limit: $limit) {
+    ...BountyFields
+  }
+}
+
+query GetBountiesCount($where: BountyWhereInput) {
+  bountiesConnection(where: $where) {
+    totalCount
+  }
+}
+
+query GetBounty($where: BountyWhereUniqueInput!) {
+  bountyByUniqueInput(where: $where) {
+    ...BountyFields
+  }
+}
+
+query GetBountyWorks($where: BountyEntryWhereInput, $order: [BountyEntryOrderByInput!], $offset: Int, $limit: Int) {
+  bountyEntries(where: $where, orderBy: $order, offset: $offset, limit: $limit) {
+    ...BountyWorkWithDetailsFields
+  }
+}
+
+query GetBountyWorksCount($where: WorkSubmittedEventWhereInput) {
+  workSubmittedEventsConnection(where: $where) {
+    totalCount
+  }
+}
+
+query GetUserBountyStatistics($memberId: ID!) {
+  bountyEntries(where: { worker: { id_eq: $memberId } }) {
+    status {
+      ... on BountyEntryStatusWinner {
+        reward
+      }
+    }
+  }
+
+  bountyContributions(where: { contributor: { id_eq: $memberId } }) {
+    amount
+  }
+}
+
+query GetUserBountyTabsInformation($memberIds: [ID!]) {
+  bountiesConnection(where: { creator: { id_in: $memberIds } }) {
+    totalCount
+  }
+
+  bountyContributionsConnection(where: { contributor: { id_in: $memberIds } }) {
+    totalCount
+  }
+
+  bountyEntriesConnection(where: { worker: { id_in: $memberIds } }) {
+    totalCount
+  }
+}
+
+query GetBountyContributors(
+  $where: BountyContributionWhereInput
+  $order: [BountyContributionOrderByInput!]
+  $offset: Int
+  $limit: Int
+) {
+  bountyContributions(where: $where, orderBy: $order, offset: $offset, limit: $limit) {
+    ...BountyContributionFields
+  }
+}
+
+query GetLatestBountyEntry($lockAccount: String) {
+  bountyEntries(where: { stakingAccount_eq: $lockAccount }, orderBy: [createdAt_DESC], limit: 1) {
+    id
+    bountyId
+    bounty {
+      createdAt
+      ...BountyFundingTypeFields
+      workPeriod
+      judgingPeriod
+      maxFundingReachedEvent {
+        createdAt
+      }
+    }
+    announcedInEvent {
+      createdAt
+      inBlock
+      network
+    }
+  }
+}
